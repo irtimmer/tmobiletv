@@ -19,4 +19,14 @@ def channel():
 @bp.route('/channels')
 def channels():
     channels = vsp.getChannels()
-    return jsonify(channels)
+
+    format = request.args.get('format', 'json')
+    if format == 'json':
+        return jsonify(channels)
+    elif format == 'm3u':
+        lines = ['#EXTM3U']
+        for channel in channels:
+            lines.append('#EXTINF:-1,%s' % (channel['name']))
+            lines.append('%sapi/channel?code=%s&format=mpd' % (request.url_root, channel['code']))
+
+        return '\n'.join(lines)
