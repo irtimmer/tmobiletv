@@ -15,3 +15,8 @@ def channel():
         return jsonify(resp)
     elif format == 'mpd':
         return redirect(resp['playURL'])
+
+@bp.route('/channels')
+def channels():
+    channels = vsp.getChannels()
+    return jsonify(channels)

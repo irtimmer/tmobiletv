@@ -93,3 +93,6 @@ class VSP:
 
         data = resp.json()
         return data
+
+    def getChannels(self):
+        return self._channels
