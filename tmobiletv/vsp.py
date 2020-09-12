@@ -90,3 +90,6 @@ class VSP:
 
         data = resp.json()
         return data
+
+    def getSession(self):
+        return self._session
