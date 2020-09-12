@@ -33,6 +33,19 @@ def channels():
             lines.append('%sapi/channel?id=%s&format=mpd' % (request.url_root, channel['ID']))
 
         return '\n'.join(lines)
+    elif format == 'm3u_kodi':
+        lines = ['#EXTM3U']
+        for channel in channels:
+            lines.append('#EXTINF:-1 tvg-id="%s" tvg-name="%s",%s' % (channel['ID'], channel['code'], channel['name']))
+            lines.append('#KODIPROP:inputstreamaddon=inputstream.adaptive')
+            lines.append('#KODIPROP:inputstream.adaptive.manifest_type=mpd')
+            if channel['physicalChannels'][0]['channelEncrypt']['encrypt'] == '1':
+                lines.append('#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha')
+                lines.append('#KODIPROP:inputstream.adaptive.license_key=%sapi/license?id=%s||R{SSM}|' % (request.url_root, channel['ID']))
+
+            lines.append('%sapi/channel?id=%s&format=mpd' % (request.url_root, channel['ID']))
+
+        return '\n'.join(lines)   
 
 @bp.route('/license', methods=['POST'])
 def license():
