@@ -36,7 +36,8 @@ def channels():
     elif format == 'm3u_kodi':
         lines = ['#EXTM3U']
         for channel in channels:
-            lines.append('#EXTINF:-1 tvg-id="%s" tvg-name="%s",%s' % (channel['ID'], channel['code'], channel['name']))
+            logo = channel['picture']['icons'][0] if 'picture' in channel else ''
+            lines.append('#EXTINF:-1 tvg-id="%s" tvg-name="%s" tvg-logo="%s",%s' % (channel['ID'], channel['code'], logo, channel['name']))
             lines.append('#KODIPROP:inputstreamaddon=inputstream.adaptive')
             lines.append('#KODIPROP:inputstream.adaptive.manifest_type=mpd')
             if channel['physicalChannels'][0]['channelEncrypt']['encrypt'] == '1':
