@@ -74,6 +74,16 @@ class VSP:
         data = resp.json()
         return data
 
+    def queryAllChannelDynamicProperties(self):
+        resp = self._session.post('%s/QueryAllChannelDynamicProperties?from=inMSAAccess' % (self._root), json = {
+            "isReturnAllMedia": "0"
+        }, headers = {
+            "X_CSRFToken": self._csrfToken
+        })
+
+        data = resp.json()
+        return data
+
     def playChannel(self, channelID, mediaID, businessType, playbillID):
         resp = self._session.post('%s/PlayChannel?from=inMSAAccess' % (self._root), json = {
             "channelID": channelID,

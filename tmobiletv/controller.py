@@ -11,7 +11,9 @@ class Controller:
     def getChannels(self):
         if self._channels == None:
             data = self._vsp.queryChannels()
-            self._channels = data['channelDetails']
+            props = self._vsp.queryAllChannelDynamicProperties()
+            self._channelProps = { x['ID']: x for x in props['channelDynamaicProp'] }
+            self._channels = [x for x in data['channelDetails'] if self._channelProps[x['ID']]['physicalChannelsDynamicProperties'][0]['btvCR']['isValid'] == '1']
 
         return self._channels
 
