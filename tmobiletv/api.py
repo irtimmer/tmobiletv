@@ -8,7 +8,8 @@ bp = Blueprint('api', __name__, url_prefix='/api')
 @bp.route('/channel')
 def channel():
     id = request.args.get('id')
-    resp = controller.playChannel(id)
+    businessType = request.args.get('businessType', 'BTV')
+    resp = controller.playChannel(id, businessType)
 
     format = request.args.get('format', 'json')
     if format == 'json':

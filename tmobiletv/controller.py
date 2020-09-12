@@ -13,7 +13,7 @@ class Controller:
 
         return self._channels
 
-    def playChannel(self, id):
+    def playChannel(self, id, businessType):
         channel = next(filter(lambda x: x['ID'] == id, self.getChannels()))
 
-        return self._vsp.playChannel(id, channel['physicalChannels'][0]['ID'])
+        return self._vsp.playChannel(id, channel['physicalChannels'][0]['ID'], businessType)
