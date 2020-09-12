@@ -16,10 +16,10 @@ class Controller:
         return self._channels
 
     @lru_cache(maxsize=10)
-    def playChannel(self, id, businessType):
+    def playChannel(self, id, businessType, playbillID=None):
         channel = next(filter(lambda x: x['ID'] == id, self.getChannels()))
 
-        return self._vsp.playChannel(id, channel['physicalChannels'][0]['ID'], businessType)
+        return self._vsp.playChannel(id, channel['physicalChannels'][0]['ID'], businessType, playbillID)
 
     def getVSP(self):
         return self._vsp

@@ -74,10 +74,11 @@ class VSP:
         data = resp.json()
         return data
 
-    def playChannel(self, channelID, mediaID, businessType):
+    def playChannel(self, channelID, mediaID, businessType, playbillID):
         resp = self._session.post('%s/PlayChannel?from=inMSAAccess' % (self._root), json = {
             "channelID": channelID,
             "mediaID": mediaID,
+            "playbillID": playbillID,
             "businessType": businessType,
             "isReturnProduct": "1",
             "isHTTPS": "1",
