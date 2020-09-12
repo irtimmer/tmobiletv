@@ -72,15 +72,12 @@ class VSP:
         })
 
         data = resp.json()
-        self._channels = data['channelDetails']
         return data
 
-    def playChannel(self, channelCode):
-        channel = next(filter(lambda x: x['code'] == channelCode, self._channels))
-
+    def playChannel(self, channelID, mediaID):
         resp = self._session.post('%s/PlayChannel?from=inMSAAccess' % (self._root), json = {
-            "channelID": channel['ID'],
-            "mediaID": channel['physicalChannels'][0]['ID'],
+            "channelID": channelID,
+            "mediaID": mediaID,
             "businessType": "BTV",
             "isReturnProduct": "1",
             "isHTTPS": "1",
@@ -93,6 +90,3 @@ class VSP:
 
         data = resp.json()
         return data
-
-    def getChannels(self):
-        return self._channels

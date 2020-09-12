@@ -2,13 +2,13 @@
 
 from flask import Blueprint, request, jsonify, redirect
 
-vsp = None
+controller = None
 bp = Blueprint('api', __name__, url_prefix='/api')
 
 @bp.route('/channel')
 def channel():
-    code = request.args.get('code')
-    resp = vsp.playChannel(code)
+    id = request.args.get('id')
+    resp = controller.playChannel(id)
 
     format = request.args.get('format', 'json')
     if format == 'json':
@@ -18,7 +18,7 @@ def channel():
 
 @bp.route('/channels')
 def channels():
-    channels = vsp.getChannels()
+    channels = controller.getChannels()
 
     format = request.args.get('format', 'json')
     if format == 'json':
@@ -27,6 +27,6 @@ def channels():
         lines = ['#EXTM3U']
         for channel in channels:
             lines.append('#EXTINF:-1,%s' % (channel['name']))
-            lines.append('%sapi/channel?code=%s&format=mpd' % (request.url_root, channel['code']))
+            lines.append('%sapi/channel?id=%s&format=mpd' % (request.url_root, channel['ID']))
 
         return '\n'.join(lines)

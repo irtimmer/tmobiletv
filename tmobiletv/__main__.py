@@ -3,6 +3,7 @@
 import api
 import yaml
 from vsp import VSP
+from controller import Controller
 
 from flask import Flask
 
@@ -15,7 +16,7 @@ def main():
         vsp.onLineHeartbeat()
         vsp.queryChannels()
 
-        api.vsp = vsp
+        api.controller = Controller(vsp)
 
         app = Flask(__name__)
         app.register_blueprint(api.bp)
