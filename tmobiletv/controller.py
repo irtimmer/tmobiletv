@@ -7,13 +7,20 @@ class Controller:
     def __init__(self, vsp):
         self._vsp = vsp
         self._channels = None
+        self._channelProps = None
+
+    def getChannelProps(self):
+        if self._channelProps == None:
+            props = self._vsp.queryAllChannelDynamicProperties()
+            self._channelProps = { x['ID']: x for x in props['channelDynamaicProp'] }
+
+        return self._channelProps
 
     def getChannels(self, radio=False):
         if self._channels == None:
             data = self._vsp.queryChannels()
-            props = self._vsp.queryAllChannelDynamicProperties()
-            self._channelProps = { x['ID']: x for x in props['channelDynamaicProp'] }
-            self._channels = [x for x in data['channelDetails'] if self._channelProps[x['ID']]['physicalChannelsDynamicProperties'][0]['btvCR']['isValid'] == '1']
+            props = self.getChannelProps()
+            self._channels = [x for x in data['channelDetails'] if props[x['ID']]['physicalChannelsDynamicProperties'][0]['btvCR']['isValid'] == '1']
 
         if not radio:
             return [x for x in self._channels if x['contentType'] == 'VIDEO_CHANNEL']
