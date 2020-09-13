@@ -11,6 +11,8 @@ class VSP:
         self._deviceID = config['deviceID']
         self._username = config['username']
         self._password = config['password']
+        self._timeZone = config['timezone']
+        self._lang = config['lang']
         self._session = requests.Session()
 
     def login(self):
@@ -26,10 +28,10 @@ class VSP:
                 "userID": self._username,
                 "userType": "0",
                 "needPosterTypes": ["1","2","3","4","5","6","7"],
-                "timeZone": "Africa/Ceuta",
+                "timeZone": self._timeZone,
                 "isSupportWebpImgFormat": "0",
                 "clientPasswd": self._password,
-                "lang": "en"
+                "lang": self._lang
             },
             "authenticateDevice": {
                 "physicalDeviceID": self._deviceID,
