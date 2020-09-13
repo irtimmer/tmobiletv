@@ -22,7 +22,8 @@ def channel():
 
 @bp.route('/channels')
 def channels():
-    channels = controller.getChannels()
+    radio = request.args.get('radio', False) == '1'
+    channels = controller.getChannels(radio)
 
     format = request.args.get('format', 'json')
     if format == 'json':
