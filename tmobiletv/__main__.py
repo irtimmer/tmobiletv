@@ -12,11 +12,6 @@ def main():
     with open("config.yml") as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
         vsp = VSP(config)
-        vsp.login()
-        vsp.authenticate()
-        vsp.onLineHeartbeat()
-        vsp.queryChannels()
-
         api.controller = Controller(vsp)
 
         app = Flask(__name__)

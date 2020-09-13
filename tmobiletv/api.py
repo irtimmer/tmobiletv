@@ -116,7 +116,7 @@ def license():
     customData = resp['authorizeResult']['triggers'][0]['customData']
     vsp = controller.getVSP()
     resp = vsp.getSession().request(request.method, url, allow_redirects=False, data=request.get_data(), headers={
-        "X_CSRFToken": vsp._csrfToken,
+        "X_CSRFToken": vsp._auth._csrfToken,
         "CADeviceType": "Widevine OTT client",
         "AcquireLicense.CustomData": customData,
     })
