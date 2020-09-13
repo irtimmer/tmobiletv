@@ -104,5 +104,27 @@ class VSP:
         data = resp.json()
         return data
 
+    def queryPlaybillListStcProps(self, channelIDs, startTime, endTime):
+        resp = self._session.post('%s/QueryPlaybillListStcProps?from=throughMSAAccess' % (self._root), json = {
+            "queryChannel": {
+                "channelIDs": channelIDs,
+                "isReturnAllMedia": "1",
+            },
+            "needChannel": "0",
+            "queryPlaybill": {
+                "startTime": startTime,
+                "endTime": endTime,
+                "count": "300",
+                "offset": "0",
+                "type": "0",
+                "isFillProgram": "1"
+            }
+        }, headers = {
+            "X_CSRFToken": self._csrfToken
+        })
+
+        data = resp.json()
+        return data
+
     def getSession(self):
         return self._session

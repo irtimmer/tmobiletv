@@ -1,8 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0+
 
 import requests
+import pytz
+import xml.etree.ElementTree as ET
 
 from flask import Blueprint, request, jsonify, redirect, Response
+from datetime import datetime, date, time, timedelta
 
 controller = None
 bp = Blueprint('api', __name__, url_prefix='/api')
@@ -49,6 +52,41 @@ def channels():
             lines.append('%sapi/channel?id=%s&format=mpd' % (request.url_root, channel['ID']))
 
         return '\n'.join(lines)   
+
+@bp.route('/epg')
+def epg():
+    radio = request.args.get('radio', False) == '1'
+    channels = controller.getChannels(radio)
+    tz = pytz.timezone(controller.getVSP()._timeZone)
+    today = tz.localize(datetime.combine(date.today(), time()))
+    daysBefore = int(request.args.get('daysBefore', 3))
+    daysAfter = int(request.args.get('daysAfter', 3))
+    startTime = today - timedelta(days=daysBefore)
+    endTime = today + timedelta(days=daysAfter)
+    resp = controller.getEPG(list(map(lambda x: x['ID'], channels)), startTime, endTime)
+
+    format = request.args.get('format', 'json')
+    if format == 'json':
+        return jsonify(resp)
+    elif format == 'xmltv':
+        root = ET.Element('tv')
+        for channel, playbills in zip(channels, resp):
+            xch = ET.SubElement(root, 'channel', attrib={
+                'id': channel['ID']
+            })
+            ET.SubElement(xch, 'display-name').text = channel['name']
+
+            for playbill in playbills['playbillLites']:
+                startTime = datetime.fromtimestamp(int(playbill['startTime']) / 1000, tz)
+                stopTime = datetime.fromtimestamp(int(playbill['endTime']) / 1000, tz)
+                xprog = ET.SubElement(root, 'programme', attrib={
+                    'channel': channel['ID'],
+                    'start': startTime.strftime('%Y%m%d%H%M%S %z'),
+                    'stop': stopTime.strftime('%Y%m%d%H%M%S %z'),
+                })
+                ET.SubElement(xprog, 'title').text = playbill['name']
+
+        return Response(ET.tostring(root, encoding='utf8', method='xml'), mimetype='text/xml')
 
 @bp.route('/license', methods=['POST'])
 def license():

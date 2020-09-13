@@ -26,5 +26,18 @@ class Controller:
 
         return self._vsp.playChannel(id, channel['physicalChannels'][0]['ID'], businessType, playbillID)
 
+    def getEPG(self, channelIDs, startTime, endTime):
+        chunks = [channelIDs[i:i + 30] for i in range(0, len(channelIDs), 30)]
+        ret = []
+
+        for chunk in chunks:
+            ret.extend(self._getEPG(';'.join(chunk), int(startTime.timestamp()), int(endTime.timestamp()))['channelPlaybills'])
+
+        return ret
+
+    @lru_cache(maxsize=20)
+    def _getEPG(self, channelIDs, startTime, endTime):
+        return self._vsp.queryPlaybillListStcProps(channelIDs.split(';'), str(startTime * 1000), str(endTime * 1000))
+
     def getVSP(self):
         return self._vsp
