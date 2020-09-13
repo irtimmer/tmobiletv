@@ -49,6 +49,9 @@ def channels():
             if 'picture' in channel:
                 options.append('tvg-logo="%s"' % (channel['picture']['icons'][0]))
 
+            if channel['contentType'] == 'AUDIO_CHANNEL':
+                options.append('radio="true"')
+
             channelProps = props[channel['ID']]['physicalChannelsDynamicProperties'][0]
             if 'cutvCR' in channelProps and channelProps['cutvCR']['isValid'] == '1':
                 catchup = "%sapi/channel?id=%s&format=mpd&playbill={catchup-id}" % (request.url_root, channel['ID'])
