@@ -1,7 +1,7 @@
 # T-Mobile TV Client
 
 This is a unofficial Python client for T-Mobile TV for watching TV on other IPTV clients.
-A webserver is run to keep a session open and providing a m3u playlist for other clients to use.
+A webserver is run to keep a session open and providing a m3u playlist and XMLTV EPG for other clients to use.
 
 Most channels requires DRM and will currently only works on Kodi if Widevine is correctly installed.
 
@@ -26,6 +26,7 @@ python tmobiletv
 ```
 
 After starting the client you can download the playlist from http://localhost:5000/api/channels?format=m3u
+A XMLTV EPG is available at http://localhost:5000/api/epg?format=xmltv
 
 ## Kodi
 For Kodi support the following plugins needs to be installed
@@ -35,3 +36,7 @@ For Kodi support the following plugins needs to be installed
 To play DRM protected channels the Widevine CDM needs to be correctly installed for inputstream.adaptive.
 
 Use the url http://localhost:5000/api/channels?format=m3u_kodi as playlist in pvr.iptvsimple configuration.
+The url http://localhost:5000/api/epg?format=xmltv can be used for the EPG.
+
+Catch-up is supported when running Kodi 19 "Matrix".
+For catch-up the EPG needs to be configured and catch-up needs to be enabled in the pvr.iptvsimple plugin.
