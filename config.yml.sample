@@ -1,0 +1,10 @@
+rootUrl: https://t-mobiletv.nl/VSP/V3
+deviceModel: 3103_PCClient
+deviceType: 7
+deviceID: "[10-digit random id]"
+
+timezone: Europe/Amsterdam
+lang: nl
+
+username: "[TV-account number]"
+password: "[TV-pin code]"
