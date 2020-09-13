@@ -27,6 +27,7 @@ def channel():
 def channels():
     radio = request.args.get('radio', False) == '1'
     channels = controller.getChannels(radio)
+    props = controller.getChannelProps()
 
     format = request.args.get('format', 'json')
     if format == 'json':
@@ -47,6 +48,13 @@ def channels():
             ]
             if 'picture' in channel:
                 options.append('tvg-logo="%s"' % (channel['picture']['icons'][0]))
+
+            channelProps = props[channel['ID']]['physicalChannelsDynamicProperties'][0]
+            if 'cutvCR' in channelProps and channelProps['cutvCR']['isValid'] == '1':
+                catchup = "%sapi/channel?id=%s&format=mpd&playbill={catchup-id}" % (request.url_root, channel['ID'])
+                options.append('catchup="vod"')
+                options.append('catchup-days="7"')
+                options.append('catchup-source="%s"' % (catchup))
 
             lines.append('#EXTINF:-1 %s,%s' % (' '.join(options), channel['name']))
             lines.append('#KODIPROP:inputstreamaddon=inputstream.adaptive')
@@ -85,11 +93,15 @@ def epg():
             for playbill in playbills['playbillLites']:
                 startTime = datetime.fromtimestamp(int(playbill['startTime']) / 1000, tz)
                 stopTime = datetime.fromtimestamp(int(playbill['endTime']) / 1000, tz)
-                xprog = ET.SubElement(root, 'programme', attrib={
+                attribs = {
                     'channel': channel['ID'],
                     'start': startTime.strftime('%Y%m%d%H%M%S %z'),
-                    'stop': stopTime.strftime('%Y%m%d%H%M%S %z'),
-                })
+                    'stop': stopTime.strftime('%Y%m%d%H%M%S %z')
+                }
+                if playbill['isCUTV'] == '1':
+                    attribs['catchup-id'] = playbill['ID']
+
+                xprog = ET.SubElement(root, 'programme', attrib=attribs)
                 ET.SubElement(xprog, 'title').text = playbill['name']
 
         return Response(ET.tostring(root, encoding='utf8', method='xml'), mimetype='text/xml')
